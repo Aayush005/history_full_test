@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Dynasties MCQ Quiz</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Accommodate fixed elements */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Timer Styling */
+        .timer {
+            position: fixed;          /* Fixes the position relative to the viewport */
+            top: 20px;                /* Positions 20px from the top */
+            right: 20px;              /* Positions 20px from the right */
+            font-size: 1.5rem;        /* Sets a readable font size */
+            color: #d9534f;           /* Sets the text color (red) */
+            font-weight: bold;        /* Makes the text bold */
+            z-index: 1000;            /* Ensures the timer stays above other elements */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 10px 15px;       /* Adds padding around the timer text */
+            border-radius: 5px;       /* Rounds the corners of the timer box */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+        }
+
+        /* Question Map Sidebar Styling */
+        .question-map {
+            position: fixed;          
+            top: 80px;                /* Positioned below the timer */
+            right: 20px;               /* Positioned on the right */
+            width: 220px;              /* Increased width to better accommodate 90 links */
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;             
+            max-height: 90vh;         
+            overflow-y: auto;         
+        }
+
+        .question-map h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Update #questionLinks to Use CSS Grid */
+        #questionLinks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px; /* Adjust the spacing between links as needed */
+            justify-items: center; /* Centers the links within each grid cell */
+        }
+
+        /* Adjust .question-map .question-link Styling */
+        .question-map .question-link {
+            padding: 5px 0; /* Reduces vertical padding */
+            font-size: 0.8rem; /* Slightly smaller font size for better fit */
+            width: 100%; /* Ensures the link takes the full width of the grid cell */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            border-radius: 4px; /* Maintains rounded corners */
+            text-align: center; /* Centers the text within the link */
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .question-map .question-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Add Correct and Incorrect Classes for Highlighting */
+        .question-map .question-link.correct {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border-color: #28a745; /* Green border */
+        }
+
+        .question-map .question-link.incorrect {
+            background-color: #dc3545; /* Red background */
+            color: #fff; /* White text */
+            border-color: #dc3545; /* Red border */
+        }
+
+        /* Add Attempted Class for Highlighting */
+        .question-map .question-link.attempted {
+            background-color: #17a2b8; /* Blue background for attempted questions */
+            color: #fff; /* White text */
+            border-color: #17a2b8; /* Blue border */
+        }
+
+        /* Submit Button and Score Styling */
+        .question-map .submit-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .question-map .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .question-map .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-map .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .question-map .result {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 900px; /* Increased width to accommodate more questions */
+            width: 100%;
+            margin-right: 240px; /* Accommodates the question map sidebar on the right */
+            margin-top: 50px;     /* Maintains spacing from the top */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .options label:hover {
+            background-color: #e6f0ff;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #17a2b8;
+        }
+
+        /* Feedback Message Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .feedback.right {
+            color: #28a745; /* Green for correct answers */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* Red for incorrect answers */
+        }
+
+        .feedback.not-attempted {
+            color: #6c757d; /* Gray for not attempted */
+        }
+
+        /* Alert when time is low */
+        .alert {
+            animation: blink 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .quiz-container {
+                max-width: 700px;
+                margin-right: 220px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .quiz-container {
+                max-width: 600px;
+                margin-right: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-right: 0; /* Removes right margin on small screens */
+            }
+
+            .question-map {
+                display: none; /* Hides the question map on small screens */
+            }
+
+            .toggle-question-map {
+                display: block; /* Shows toggle button on small screens */
+            }
+        }
+
+        /* Toggle Button for Question Map (Visible on Small Screens) */
+        .toggle-question-map {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Positioned on the right */
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active State for Question Map on Small Screens */
+        .question-map.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">15:00</div>
+
+    <!-- Toggle Button for Question Map (Visible on Small Screens) -->
+    <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
+
+    <!-- Question Map Sidebar -->
+    <div class="question-map" id="questionMap">
+        <h2>Question Map</h2>
+        <div id="questionLinks">
+            <!-- Question links will be injected here by JavaScript -->
+        </div>
+        <!-- Submit Button and Score Display Below the Question Links -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="checkAnswers()">Submit</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <h1>Historical Dynasties MCQ Quiz</h1>
+        
+        <form id="quizForm">
+            <!-- Questions will be injected here by JavaScript -->
+        </form>
+
+        <!-- Submit Button and Score Display Below the Questions List -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtnBelow" onclick="checkAnswers()">Submit</button>
+            <div id="resultBelow" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Declare shuffledQuestions globally
+        let shuffledQuestions = [];
+
+        // Replace the following array with your own questions
+        const questions = [
+  // 1. Tughlaq
+  {
+    id: 'q1',
+    question: 'Which dynasty came to power in India after the Tughlaq dynasty?',
+    options: [
+      { text: 'The Guptas', isCorrect: false },
+      { text: 'The Khiljis', isCorrect: false },
+      { text: 'The Mughals', isCorrect: false },
+      { text: 'The Sayyids', isCorrect: true }
+    ]
+  },
+  // 2.
+  {
+    id: 'q2',
+    question: 'Who among the following was the founder of the Tughlaq dynasty?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: true },
+      { text: 'Muhammad bin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: false }
+    ]
+  },
+  // 3.
+  {
+    id: 'q3',
+    question: 'Which Sultan of Delhi shifted the capital from Delhi to Daulatabad?',
+    options: [
+      { text: 'Alauddin Khilji', isCorrect: false },
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: true },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false }
+    ]
+  },
+  // 4.
+  {
+    id: 'q4',
+    question: 'Who was the Moroccan traveler who visited India during the reign of Muhammad bin Tughlaq?',
+    options: [
+      { text: 'Marco Polo', isCorrect: false },
+      { text: 'Ibn Battuta', isCorrect: true },
+      { text: 'Al-Masudi', isCorrect: false },
+      { text: 'Al-Biruni', isCorrect: false }
+    ]
+  },
+  // 5.
+  {
+    id: 'q5',
+    question: 'Which Tughlaq ruler is known for his unsuccessful experiments and eccentric policies?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: true },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: false }
+    ]
+  },
+  // 6.
+  {
+    id: 'q6',
+    question: 'During whose reign did Timur invade India?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: true }
+    ]
+  },
+  // 7.
+  {
+    id: 'q7',
+    question: 'Which Sultan of Delhi established the department of agriculture called \'Diwan-i-Kohi\'?',
+    options: [
+      { text: 'Alauddin Khilji', isCorrect: false },
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: true },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false }
+    ]
+  },
+  // 8.
+  {
+    id: 'q8',
+    question: 'Who among the following Tughlaq rulers introduced the token currency system?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: true },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: false }
+    ]
+  },
+  // 9.
+  {
+    id: 'q9',
+    question: 'Which Tughlaq ruler is credited with the construction of the city of Tughlaqabad near Delhi?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: true },
+      { text: 'Muhammad bin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: false }
+    ]
+  },
+  // 10.
+  {
+    id: 'q10',
+    question: 'Who was the last ruler of the Tughlaq dynasty?',
+    options: [
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Muhammad bin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false },
+      { text: 'Nasiruddin Mahmud', isCorrect: true }
+    ]
+  },
+  // 11. Mughal Dynasty
+  {
+    id: 'q11',
+    question: 'Who among the following was NOT a \'Navratna\' of Mughal Emperor Akbar?',
+    options: [
+      { text: 'Abul Fazl', isCorrect: false },
+      { text: 'Tansen', isCorrect: false },
+      { text: 'Bairam Khan', isCorrect: true },
+      { text: 'Birbal', isCorrect: false }
+    ]
+  },
+  // 12.
+  {
+    id: 'q12',
+    question: 'The Mughal emperor who adopted the title of Alamgir was:',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: true },
+      { text: 'Jahangir', isCorrect: false }
+    ]
+  },
+  // 13.
+  {
+    id: 'q13',
+    question: 'Which Mughal emperor enrolled Guru Gobind Singh into Mughal service?',
+    options: [
+      { text: 'Mohammed Shah', isCorrect: false },
+      { text: 'Jahandar Shah', isCorrect: false },
+      { text: 'Farrukhsiyar', isCorrect: false },
+      { text: 'Bahadur Shah I', isCorrect: true }
+    ]
+  },
+  // 14.
+  {
+    id: 'q14',
+    question: 'Who among the following Mughal kings had sent Raja Ram Mohan Roy as his envoy to London?',
+    options: [
+      { text: 'Shah Alam II', isCorrect: false },
+      { text: 'Alamgir II', isCorrect: false },
+      { text: 'Akbar II', isCorrect: true },
+      { text: 'Bahadur Shah II', isCorrect: false }
+    ]
+  },
+  // 15.
+  {
+    id: 'q15',
+    question: 'Who among the following was the first Mughal ruler to adopt the custom of Tuladan?',
+    options: [
+      { text: 'Jahangir', isCorrect: false },
+      { text: 'Akbar', isCorrect: true },
+      { text: 'Shah Jahan', isCorrect: false },
+      { text: 'Humayun', isCorrect: false }
+    ]
+  },
+  // 16.
+  {
+    id: 'q16',
+    question: 'During the Mughal period, the in-charge of law and order in the villages was:',
+    options: [
+      { text: 'Patwari', isCorrect: false },
+      { text: 'Muqaddam', isCorrect: true },
+      { text: 'Karkun', isCorrect: false },
+      { text: 'Qanungo', isCorrect: false }
+    ]
+  },
+  // 17.
+  {
+    id: 'q17',
+    question: 'Who among the following was named as Zinda Pir or Living Saint in the Mughal period?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: true },
+      { text: 'Jahangir', isCorrect: false },
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Babur', isCorrect: false }
+    ]
+  },
+  // 18.
+  {
+    id: 'q18',
+    question: 'Which battle led to the foundation of the Mughal Empire?',
+    options: [
+      { text: 'Second Battle of Panipat', isCorrect: false },
+      { text: 'First Battle of Panipat', isCorrect: true },
+      { text: 'Third Battle of Panipat', isCorrect: false },
+      { text: 'Battle of Kannauj', isCorrect: false }
+    ]
+  },
+  // 19.
+  {
+    id: 'q19',
+    question: 'Who was the Finance Minister of the Mughal Empire during Akbar’s reign?',
+    options: [
+      { text: 'Birbal', isCorrect: false },
+      { text: 'Raja Man Singh I', isCorrect: false },
+      { text: 'Tansen', isCorrect: false },
+      { text: 'Raja Todar Mal', isCorrect: true }
+    ]
+  },
+  // 20.
+  {
+    id: 'q20',
+    question: 'At the time of Aurangzeb\'s death in 1707, the Mughal Empire consisted of how many Subahs (provinces)?',
+    options: [
+      { text: '21', isCorrect: true },
+      { text: '17', isCorrect: false },
+      { text: '20', isCorrect: false },
+      { text: '14', isCorrect: false }
+    ]
+  },
+  // 21.
+  {
+    id: 'q21',
+    question: 'Which Mughal ruler transferred the capital of the Mughal Empire from Agra to Delhi permanently?',
+    options: [
+      { text: 'Humayun', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Babur', isCorrect: false },
+      { text: 'Shah Jahan', isCorrect: true }
+    ]
+  },
+  // 22.
+  {
+    id: 'q22',
+    question: 'What was the northwestern border of the Mughal Empire during Akbar\'s reign?',
+    options: [
+      { text: 'Punjab', isCorrect: false },
+      { text: 'Hindukush', isCorrect: true },
+      { text: 'Kabul', isCorrect: false },
+      { text: 'Sindh', isCorrect: false }
+    ]
+  },
+  // 23.
+  {
+    id: 'q23',
+    question: 'The foundation of the Mughal Empire was laid by which ruler after defeating Ibrahim Lodi, marking the end of the Lodi Dynasty?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Jahangir', isCorrect: false },
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Babur', isCorrect: true }
+    ]
+  },
+  // 24.
+  {
+    id: 'q24',
+    question: 'Which religion was propounded by Mughal Emperor Akbar in 1582 A.D., with the intention of merging the best elements of different religions?',
+    options: [
+      { text: 'Akbarnama', isCorrect: false },
+      { text: 'Ain-i-Akbari', isCorrect: false },
+      { text: 'Zij-i-Ilkhani', isCorrect: false },
+      { text: 'Din-i-Ilahi', isCorrect: true }
+    ]
+  },
+  // 25.
+  {
+    id: 'q25',
+    question: 'Who was the founder of the Mughal Empire?',
+    options: [
+      { text: 'Akbar', isCorrect: false },
+      { text: 'Humayun', isCorrect: false },
+      { text: 'Babur', isCorrect: true },
+      { text: 'Alauddin Khilji', isCorrect: false }
+    ]
+  },
+  // 26. Slave Dynasty
+  {
+    id: 'q26',
+    question: 'Who was the founder of the Slave Dynasty in India?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: true },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 27.
+  {
+    id: 'q27',
+    question: 'Which ruler of the Slave Dynasty was known for completing the construction of the Qutub Minar?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Nasir-ud-din Mahmud', isCorrect: false }
+    ]
+  },
+  // 28.
+  {
+    id: 'q28',
+    question: 'Razia Sultan, the first and only female ruler of the Delhi Sultanate, belonged to which dynasty?',
+    options: [
+      { text: 'Khilji Dynasty', isCorrect: false },
+      { text: 'Tughlaq Dynasty', isCorrect: false },
+      { text: 'Slave Dynasty', isCorrect: true },
+      { text: 'Lodhi Dynasty', isCorrect: false }
+    ]
+  },
+  // 29.
+  {
+    id: 'q29',
+    question: 'Who among the following was the last ruler of the Slave Dynasty?',
+    options: [
+      { text: 'Balban', isCorrect: false },
+      { text: 'Nasir-ud-din Mahmud', isCorrect: true },
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false }
+    ]
+  },
+  // 30.
+  {
+    id: 'q30',
+    question: 'Which Sultan of the Slave Dynasty introduced the \'Chalisa\' or the group of forty nobles?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 31.
+  {
+    id: 'q31',
+    question: 'The term \'Slave Dynasty\' is also known by which other name?',
+    options: [
+      { text: 'Khilji Dynasty', isCorrect: false },
+      { text: 'Mamluk Dynasty', isCorrect: true },
+      { text: 'Tughlaq Dynasty', isCorrect: false },
+      { text: 'Lodhi Dynasty', isCorrect: false }
+    ]
+  },
+  // 32.
+  {
+    id: 'q32',
+    question: 'Which ruler of the Slave Dynasty shifted the capital from Lahore to Delhi?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 33.
+  {
+    id: 'q33',
+    question: 'Who was the first Sultan of Delhi to issue regular currency and declare Delhi as the capital?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 34.
+  {
+    id: 'q34',
+    question: 'Which Sultan of the Slave Dynasty is credited with consolidating the Turkish rule in India?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 35.
+  {
+    id: 'q35',
+    question: 'Who among the following was known as \'Lakh Baksh\' for his generosity?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: true },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 36.
+  {
+    id: 'q36',
+    question: 'Which Sultan of the Slave Dynasty introduced the Persian festival of Nauroz in India?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 37.
+  {
+    id: 'q37',
+    question: 'The \'Sijda\' and \'Paibos\' ceremonies were introduced by which Sultan of the Slave Dynasty?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 38.
+  {
+    id: 'q38',
+    question: 'Who among the following was the first Sultan to appoint spies, known as \'Barids\', in the administration?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 39.
+  {
+    id: 'q39',
+    question: 'Which Sultan of the Slave Dynasty was known for his policy of \'Blood and Iron\'?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 40.
+  {
+    id: 'q40',
+    question: 'Who was the first Sultan of Delhi to die in an accident while playing polo (Chaugan)?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: true },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 41.
+  {
+    id: 'q41',
+    question: 'Which Sultan of the Slave Dynasty was known for his strict enforcement of law and order?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 42.
+  {
+    id: 'q42',
+    question: 'Who among the following was the first Sultan to introduce the system of \'Iqta\' in India?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 43.
+  {
+    id: 'q43',
+    question: 'Which Sultan of the Slave Dynasty was the first to face the Mongol invasions in India?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: true },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 44.
+  {
+    id: 'q44',
+    question: 'Who among the following was the first Sultan to appoint a \'Naib\' or deputy to assist in administration?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia Sultan', isCorrect: false }
+    ]
+  },
+  // 45.
+  {
+    id: 'q45',
+    question: 'Which Sultan of the Slave Dynasty was known for his architectural contributions, including the completion of the Qutub Minar?',
+    options: [
+      { text: 'Qutb-ud-din Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false },
+      { text: 'Balban', isCorrect: true },
+      { text: 'Razia', isCorrect: false }
+    ]
+  },
+  // 46. Khilji Dynasty
+  {
+    id: 'q46',
+    question: 'Who was the founder of the Khilji Dynasty?',
+    options: [
+      { text: 'Alauddin Khilji', isCorrect: false },
+      { text: 'Jalaluddin Khilji', isCorrect: true },
+      { text: 'Qutbuddin Aibak', isCorrect: false },
+      { text: 'Iltutmish', isCorrect: false }
+    ]
+  },
+  // 47.
+  {
+    id: 'q47',
+    question: 'Which Sultan introduced market control policies during the Khilji Dynasty?',
+    options: [
+      { text: 'Balban', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Muhammad bin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false }
+    ]
+  },
+  // 48.
+  {
+    id: 'q48',
+    question: 'Alauddin Khilji\'s market control system was aimed at:',
+    options: [
+      { text: 'Increasing state revenue', isCorrect: false },
+      { text: 'Controlling prices of essential commodities', isCorrect: true },
+      { text: 'Expanding the empire', isCorrect: false },
+      { text: 'Promoting foreign trade', isCorrect: false }
+    ]
+  },
+  // 49.
+  {
+    id: 'q49',
+    question: 'Who among the following was a prominent general during Alauddin Khilji\'s reign?',
+    options: [
+      { text: 'Malik Kafur', isCorrect: true },
+      { text: 'Sher Shah', isCorrect: false },
+      { text: 'Balban', isCorrect: false },
+      { text: 'Qutbuddin Aibak', isCorrect: false }
+    ]
+  },
+  // 50.
+  {
+    id: 'q50',
+    question: 'The Khilji Dynasty ruled during which period?',
+    options: [
+      { text: '1206-1290', isCorrect: false },
+      { text: '1290-1320', isCorrect: true },
+      { text: '1320-1414', isCorrect: false },
+      { text: '1414-1451', isCorrect: false }
+    ]
+  },
+  // 51.
+  {
+    id: 'q51',
+    question: 'Which Sultan of the Khilji Dynasty was known for his southern expeditions?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Khusro Khan', isCorrect: false }
+    ]
+  },
+  // 52.
+  {
+    id: 'q52',
+    question: 'Alauddin Khilji\'s administrative reforms were primarily aimed at:',
+    options: [
+      { text: 'Expanding the empire', isCorrect: false },
+      { text: 'Strengthening central authority', isCorrect: true },
+      { text: 'Promoting art and culture', isCorrect: false },
+      { text: 'Enhancing trade relations', isCorrect: false }
+    ]
+  },
+  // 53.
+  {
+    id: 'q53',
+    question: 'The \'Chihalgani\' or \'Group of Forty\' was abolished by which Khilji ruler?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Khusro Khan', isCorrect: false }
+    ]
+  },
+  // 54.
+  {
+    id: 'q54',
+    question: 'Who was the last ruler of the Khilji Dynasty?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Khusro Khan', isCorrect: true }
+    ]
+  },
+  // 55.
+  {
+    id: 'q55',
+    question: 'The Khilji Dynasty was succeeded by which dynasty?',
+    options: [
+      { text: 'Tughlaq Dynasty', isCorrect: true },
+      { text: 'Lodi Dynasty', isCorrect: false },
+      { text: 'Sayyid Dynasty', isCorrect: false },
+      { text: 'Mughal Dynasty', isCorrect: false }
+    ]
+  },
+  // 56.
+  {
+    id: 'q56',
+    question: 'Which Khilji ruler is known for his conquest of Gujarat?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Khusro Khan', isCorrect: false }
+    ]
+  },
+  // 57.
+  {
+    id: 'q57',
+    question: 'The \'Alauddin Khilji\' was the first Sultan to:',
+    options: [
+      { text: 'Introduce token currency', isCorrect: false },
+      { text: 'Maintain a standing army', isCorrect: true },
+      { text: 'Establish a navy', isCorrect: false },
+      { text: 'Build the Qutub Minar', isCorrect: false }
+    ]
+  },
+  // 58.
+  {
+    id: 'q58',
+    question: 'Alauddin Khilji\'s revenue reforms included:',
+    options: [
+      { text: '\'Introduction of \'Iqta\' system', isCorrect: false },
+      { text: 'Measurement of land for tax assessment', isCorrect: true },
+      { text: 'Abolition of \'Jizya\' tax', isCorrect: false },
+      { text: 'Introduction of \'Zakat\' tax', isCorrect: false }
+    ]
+  },
+  // 59.
+  {
+    id: 'q59',
+    question: 'The \'Alauddin Khilji\' was the first Sultan to:',
+    options: [
+      { text: 'Introduce market control policies', isCorrect: true },
+      { text: 'Establish diplomatic relations with China', isCorrect: false },
+      { text: 'Build a new capital city', isCorrect: false },
+      { text: 'Introduce Persian as the court language', isCorrect: false }
+    ]
+  },
+  // 60.
+  {
+    id: 'q60',
+    question: 'Which Khilji ruler was assassinated by his own commander?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: true },
+      { text: 'Khusro Khan', isCorrect: false }
+    ]
+  },
+  // 61.
+  {
+    id: 'q61',
+    question: 'The \'Alauddin Khilji\' was the first Sultan to:',
+    options: [
+      { text: 'Introduce price control measures', isCorrect: true },
+      { text: 'Abolish slavery', isCorrect: false },
+      { text: 'Establish a postal system', isCorrect: false },
+      { text: 'Introduce a new calendar', isCorrect: false }
+    ]
+  },
+  // 62.
+  {
+    id: 'q62',
+    question: 'Alauddin Khilji\'s military campaigns in South India were led by:',
+    options: [
+      { text: 'Malik Kafur', isCorrect: true },
+      { text: 'Zafar Khan', isCorrect: false },
+      { text: 'Nusrat Khan', isCorrect: false },
+      { text: 'Ulugh Khan', isCorrect: false }
+    ]
+  },
+  // 63.
+  {
+    id: 'q63',
+    question: 'The \'Alauddin Khilji\' was the first Sultan to:',
+    options: [
+      { text: 'Introduce rationing system', isCorrect: false },
+      { text: 'Establish a network of spies', isCorrect: true },
+      { text: 'Build a standing navy', isCorrect: false },
+      { text: 'Introduce a new coinage system', isCorrect: false }
+    ]
+  },
+  // 64.
+  {
+    id: 'q64',
+    question: 'Which Khilji ruler declared himself as the \'Second Alexander\' (Sikander-e-Sani)?',
+    options: [
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Khusro Khan', isCorrect: false }
+    ]
+  },
+  // 65.
+  {
+    id: 'q65',
+    question: 'The introduction of the \'Dagh\' (branding of horses) and \'Chehra\' (detailed description of soldiers) was an initiative of which Khilji Sultan?',
+    options: [
+      { text: 'Jalaluddin Khilji', isCorrect: false },
+      { text: 'Alauddin Khilji', isCorrect: true },
+      { text: 'Ghiyasuddin Tughlaq', isCorrect: false },
+      { text: 'Firoz Shah Tughlaq', isCorrect: false }
+    ]
+  },
+  // 66. Lodhi Dynasty
+  {
+    id: 'q66',
+    question: 'Who was the founder of the Lodi Dynasty?',
+    options: [
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Bahlol Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 67.
+  {
+    id: 'q67',
+    question: 'The Lodi Dynasty was the _______ dynasty of the Delhi Sultanate.',
+    options: [
+      { text: 'Third', isCorrect: false },
+      { text: 'Fourth', isCorrect: false },
+      { text: 'Fifth', isCorrect: true },
+      { text: 'Sixth', isCorrect: false }
+    ]
+  },
+  // 68.
+  {
+    id: 'q68',
+    question: 'Which Lodi ruler established the city of Agra?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 69.
+  {
+    id: 'q69',
+    question: 'The Battle of Panipat in 1526 was fought between Babur and which Lodi ruler?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 70.
+  {
+    id: 'q70',
+    question: 'Which Lodi ruler was defeated by Babur, leading to the establishment of the Mughal Empire in India?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 71.
+  {
+    id: 'q71',
+    question: 'Who among the following was the last ruler of the Lodi Dynasty?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 72.
+  {
+    id: 'q72',
+    question: 'Which Lodi ruler shifted the capital from Delhi to Agra?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 73.
+  {
+    id: 'q73',
+    question: 'The Lodi Dynasty was of which origin?',
+    options: [
+      { text: 'Turkish', isCorrect: false },
+      { text: 'Afghan', isCorrect: true },
+      { text: 'Persian', isCorrect: false },
+      { text: 'Arab', isCorrect: false }
+    ]
+  },
+  // 74.
+  {
+    id: 'q74',
+    question: 'Which Lodi ruler was known for his administrative reforms and patronage of art and culture?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 75.
+  {
+    id: 'q75',
+    question: 'The Lodi Gardens in Delhi are named after which dynasty?',
+    options: [
+      { text: 'Mughal', isCorrect: false },
+      { text: 'Lodi', isCorrect: true },
+      { text: 'Tughlaq', isCorrect: false },
+      { text: 'Khilji', isCorrect: false }
+    ]
+  },
+  // 76.
+  {
+    id: 'q76',
+    question: 'Which Lodi ruler faced internal rebellions leading to the weakening of the dynasty?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 77.
+  {
+    id: 'q77',
+    question: 'The Lodi Dynasty was succeeded by which empire in India?',
+    options: [
+      { text: 'Mughal Empire', isCorrect: true },
+      { text: 'Maratha Empire', isCorrect: false },
+      { text: 'British Empire', isCorrect: false },
+      { text: 'Vijayanagara Empire', isCorrect: false }
+    ]
+  },
+  // 78.
+  {
+    id: 'q78',
+    question: 'Which Lodi ruler was known for his efforts to expand the Sultanate by conquering Jaunpur?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: true },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 79.
+  {
+    id: 'q79',
+    question: 'The tomb of which Lodi ruler is located in the Lodi Gardens of Delhi?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 80.
+  {
+    id: 'q80',
+    question: 'Which Lodi ruler introduced the system of auditing accounts in the Sultanate?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 81.
+  {
+    id: 'q81',
+    question: 'The Bara Gumbad in Delhi was constructed during the reign of which Lodi ruler?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 82.
+  {
+    id: 'q82',
+    question: 'Which Lodi ruler was defeated by Rana Sanga of Mewar?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 83.
+  {
+    id: 'q83',
+    question: 'Which architectural structure in Delhi, built during the Lodi period, is known for its garden-style layout?',
+    options: [
+      { text: 'Qutub Minar', isCorrect: false },
+      { text: 'Lodi Gardens', isCorrect: true },
+      { text: 'Red Fort', isCorrect: false },
+      { text: 'Humayun’s Tomb', isCorrect: false }
+    ]
+  },
+  // 84.
+  {
+    id: 'q84',
+    question: 'The Lodi Dynasty came to an end with the defeat of which ruler?',
+    options: [
+      { text: 'Sikandar Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false },
+      { text: 'Ibrahim Lodi', isCorrect: true },
+      { text: 'Bahlol Lodi', isCorrect: false }
+    ]
+  },
+  // 85.
+  {
+    id: 'q85',
+    question: 'Who among the following encouraged the practice of agriculture by reducing land revenue?',
+    options: [
+      { text: 'Bahlol Lodi', isCorrect: false },
+      { text: 'Sikandar Lodi', isCorrect: true },
+      { text: 'Ibrahim Lodi', isCorrect: false },
+      { text: 'Daulat Khan Lodi', isCorrect: false }
+    ]
+  },
+  // 86. Sayyid Dynasty
+  {
+    id: 'q86',
+    question: 'Who was the founder of the Sayyid Dynasty?',
+    options: [
+      { text: 'Khizr Khan', isCorrect: true },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Muhammad Shah', isCorrect: false },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: false }
+    ]
+  },
+  // 87.
+  {
+    id: 'q87',
+    question: 'The Sayyid Dynasty ruled during which period?',
+    options: [
+      { text: '1206–1290', isCorrect: false },
+      { text: '1290–1320', isCorrect: false },
+      { text: '1414–1451', isCorrect: true },
+      { text: '1451–1526', isCorrect: false }
+    ]
+  },
+  // 88.
+  {
+    id: 'q88',
+    question: 'Which ruler succeeded Khizr Khan in the Sayyid Dynasty?',
+    options: [
+      { text: 'Mubarak Shah', isCorrect: true },
+      { text: 'Muhammad Shah', isCorrect: false },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: false },
+      { text: 'Bahlul Lodi', isCorrect: false }
+    ]
+  },
+  // 89.
+  {
+    id: 'q89',
+    question: 'The Sayyid Dynasty was part of which larger empire?',
+    options: [
+      { text: 'Mughal Empire', isCorrect: false },
+      { text: 'Delhi Sultanate', isCorrect: true },
+      { text: 'Maratha Empire', isCorrect: false },
+      { text: 'Vijayanagara Empire', isCorrect: false }
+    ]
+  },
+  // 90.
+  {
+    id: 'q90',
+    question: 'Who was the last ruler of the Sayyid Dynasty?',
+    options: [
+      { text: 'Khizr Khan', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Muhammad Shah', isCorrect: false },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: true }
+    ]
+  },
+  // 91.
+  {
+    id: 'q91',
+    question: 'Which dynasty succeeded the Sayyid Dynasty?',
+    options: [
+      { text: 'Khilji Dynasty', isCorrect: false },
+      { text: 'Tughlaq Dynasty', isCorrect: false },
+      { text: 'Lodi Dynasty', isCorrect: true },
+      { text: 'Mughal Dynasty', isCorrect: false }
+    ]
+  },
+  // 92.
+  {
+    id: 'q92',
+    question: 'The Sayyid Dynasty is known for being:',
+    options: [
+      { text: 'The first Muslim dynasty in India', isCorrect: false },
+      { text: 'The last dynasty of the Delhi Sultanate', isCorrect: false },
+      { text: 'The shortest-ruling dynasty of the Delhi Sultanate', isCorrect: true },
+      { text: 'The longest-ruling dynasty of the Delhi Sultanate', isCorrect: false }
+    ]
+  },
+  // 93.
+  {
+    id: 'q93',
+    question: 'Which Sayyid ruler shifted the capital from Delhi to Mubarakabad?',
+    options: [
+      { text: 'Khizr Khan', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: true },
+      { text: 'Muhammad Shah', isCorrect: false },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: false }
+    ]
+  },
+  // 94.
+  {
+    id: 'q94',
+    question: 'The Sayyid Dynasty claimed descent from:',
+    options: [
+      { text: 'Prophet Muhammad', isCorrect: true },
+      { text: 'Genghis Khan', isCorrect: false },
+      { text: 'Timur', isCorrect: false },
+      { text: 'Alexander the Great', isCorrect: false }
+    ]
+  },
+  // 95.
+  {
+    id: 'q95',
+    question: 'Which of the following was a significant challenge faced by the Sayyid rulers?',
+    options: [
+      { text: 'Mongol invasions', isCorrect: false },
+      { text: 'Internal revolts', isCorrect: true },
+      { text: 'Portuguese colonization', isCorrect: false },
+      { text: 'Maratha raids', isCorrect: false }
+    ]
+  },
+  // 96.
+  {
+    id: 'q96',
+    question: 'The Sayyid Dynasty primarily ruled over:',
+    options: [
+      { text: 'Entire Indian subcontinent', isCorrect: false },
+      { text: 'Northern India', isCorrect: true },
+      { text: 'Southern India', isCorrect: false },
+      { text: 'Western India', isCorrect: false }
+    ]
+  },
+  // 97.
+  {
+    id: 'q97',
+    question: 'Which Sayyid ruler was known for his efforts to suppress the rebellion of Bahlul Lodi?',
+    options: [
+      { text: 'Khizr Khan', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: false },
+      { text: 'Muhammad Shah', isCorrect: true },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: false }
+    ]
+  },
+  // 98.
+  {
+    id: 'q98',
+    question: 'The Sayyid rulers were known to have:',
+    options: [
+      { text: 'Expanded the empire significantly', isCorrect: false },
+      { text: 'Maintained the status quo without much expansion', isCorrect: false },
+      { text: 'Lost significant territories to regional powers', isCorrect: true },
+      { text: 'Established maritime trade routes', isCorrect: false }
+    ]
+  },
+  // 99.
+  {
+    id: 'q99',
+    question: 'The primary reason for the decline of the Sayyid Dynasty was:',
+    options: [
+      { text: 'Foreign invasions', isCorrect: false },
+      { text: 'Economic instability', isCorrect: false },
+      { text: 'Weak military leadership', isCorrect: false },
+      { text: 'Rise of the Lodi Dynasty', isCorrect: true }
+    ]
+  },
+  // 100.
+  {
+    id: 'q100',
+    question: 'Which Sayyid ruler was assassinated by his own nobles?',
+    options: [
+      { text: 'Khizr Khan', isCorrect: false },
+      { text: 'Mubarak Shah', isCorrect: true },
+      { text: 'Muhammad Shah', isCorrect: false },
+      { text: 'Ala-ud-din Alam Shah', isCorrect: false }
+    ]
+  },
+  // 101.
+  {
+    id: 'q101',
+    question: 'The Sayyid Dynasty\'s rule is often described as:',
+    options: [
+      { text: 'A period of cultural renaissance', isCorrect: false },
+      { text: 'A time of political instability', isCorrect: true },
+      { text: 'An era of economic prosperity', isCorrect: false },
+      { text: 'A phase of territorial expansion', isCorrect: false }
+    ]
+  },
+  // 102.
+  {
+    id: 'q102',
+    question: 'Which architectural contribution is attributed to the Sayyid Dynasty?',
+    options: [
+      { text: 'Qutub Minar', isCorrect: false },
+      { text: 'Lodi Gardens', isCorrect: false },
+      { text: 'Tomb of Mubarak Shah', isCorrect: true },
+      { text: 'Red Fort', isCorrect: false }
+    ]
+  },
+  // 103.
+  {
+    id: 'q103',
+    question: 'The Sayyid Dynasty was established after the decline of which dynasty?',
+    options: [
+      { text: 'Khilji Dynasty', isCorrect: false },
+      { text: 'Tughlaq Dynasty', isCorrect: true },
+      { text: 'Lodi Dynasty', isCorrect: false },
+      { text: 'Mughal Dynasty', isCorrect: false }
+    ]
+  },
+  // 104.
+  {
+    id: 'q104',
+    question: 'Which foreign invader appointed Khizr Khan as the governor of Delhi, leading to the formation of the Sayyid Dynasty?',
+    options: [
+      { text: 'Timur', isCorrect: true },
+      { text: 'Babur', isCorrect: false },
+      { text: 'Chengiz Khan', isCorrect: false },
+      { text: 'Alexander', isCorrect: false }
+    ]
+  },
+  // 105.
+  {
+    id: 'q105',
+    question: 'Which of the following statements best describes the Sayyid Dynasty’s influence on art and culture?',
+    options: [
+      { text: 'They were known for elaborate architectural projects', isCorrect: false },
+      { text: 'They made significant contributions to poetry and literature', isCorrect: false },
+      { text: 'They left behind a limited architectural legacy', isCorrect: true },
+      { text: 'They promoted the Mughal style in art', isCorrect: false }
+    ]
+  }
+];
+
+
+        // Function to shuffle an array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the questions dynamically
+        function renderQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            const questionsArray = getQuestions(); // Retrieve the questions array
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 90) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 90 questions in the questions array.</p>';
+                return;
+            }
+
+            // Randomly select 90 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 90);
+
+            // Assign shuffledQuestions to the global variable
+            shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
+
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `question-${index + 1}`; // Assign unique ID
+
+                // Question text
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                // Options
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                // Shuffle options and assign back to q.options
+                q.options = shuffleArray([...q.options]);
+                const shuffledOptions = q.options;
+
+                // Assign labels A, B, C, D dynamically
+                const labels = ['A', 'B', 'C', 'D'];
+
+                shuffledOptions.forEach((option, optIndex) => {
+                    const optionId = `${q.id}_option${optIndex + 1}`; // Unique ID for each option
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = q.id;
+                    radioInput.value = labels[optIndex]; // Assign label as value
+
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = `${labels[optIndex]}) ${option.text}`;
+
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+
+                    // Add Attempted Class when an option is selected
+                    radioInput.addEventListener('change', function() {
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink && !questionMapLink.classList.contains('correct') && !questionMapLink.classList.contains('incorrect')) {
+                            questionMapLink.classList.add('attempted');
+                        }
+                    });
+                });
+
+                questionDiv.appendChild(optionsDiv);
+
+                // Add Feedback Div Below Options
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.id = `feedback-${index + 1}`; // Unique ID for each feedback div
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+
+            generateQuestionMap(shuffledQuestions.length);
+        }
+
+        // Function to retrieve the questions array
+        function getQuestions() {
+            // Replace this with your actual questions array
+            return questions; // Assuming 'questions' is defined globally
+        }
+
+        // Function to randomly select n questions from the questions array
+        function getRandomQuestions(questionsArray, n) {
+            const shuffled = shuffleArray([...questionsArray]);
+            return shuffled.slice(0, n);
+        }
+
+        // Function to generate the Question Map links
+        function generateQuestionMap(totalQuestions) {
+            const questionLinksDiv = document.getElementById('questionLinks');
+            questionLinksDiv.innerHTML = ''; // Clear any existing links
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const link = document.createElement('a');
+                link.href = `#question-${i}`;
+                link.classList.add('question-link');
+                link.textContent = `Q${i}`;
+
+                questionLinksDiv.appendChild(link);
+            }
+        }
+
+        // Timer Functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                // Add alert class when time is less than 1 minute
+                if (timer <= 60 && timer > 0) { // 60 seconds = 1 minute
+                    display.classList.add('alert');
+                }
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        // Function to automatically submit the quiz when time is up
+        function autoSubmit() {
+            alert("Time's up! The quiz will now be submitted.");
+            checkAnswers();
+        }
+
+        // Initialize the quiz on page load
+        window.onload = function () {
+            renderQuestions(); // Render questions on page load
+            const fifteenMinutes = 60 * 15, // 15 minutes in seconds
+                  display = document.getElementById('timer');
+            startTimer(fifteenMinutes, display);
+        };
+
+        // Function to check answers and display the result
+        function checkAnswers() {
+            let score = 0;
+            let totalQuestions = shuffledQuestions.length; // Total number of questions
+
+            shuffledQuestions.forEach((q, index) => { // Iterate over each question
+                const selectedOption = document.querySelector(`input[name="${q.id}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index + 1}`);
+                
+                if (selectedOption) {
+                    // Get the selected label (A, B, C, D)
+                    const selectedLabel = selectedOption.value;
+                    // Map label to option index
+                    const labelIndex = ['A', 'B', 'C', 'D'].indexOf(selectedLabel);
+                    if (labelIndex !== -1 && q.options[labelIndex].isCorrect) {
+                        score += 1; // Add 1 mark for correct answer
+
+                        // Mark the question link as correct in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('correct');
+                            questionMapLink.classList.remove('incorrect', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Right';
+                            feedbackDiv.classList.add('right');
+                            feedbackDiv.classList.remove('wrong', 'not-attempted');
+                        }
+                    } else {
+                        score -= 0.5; // Deduct 0.5 marks for incorrect answer
+
+                        // Mark the question link as incorrect in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('incorrect');
+                            questionMapLink.classList.remove('correct', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Wrong';
+                            feedbackDiv.classList.add('wrong');
+                            feedbackDiv.classList.remove('right', 'not-attempted');
+                        }
+                    }
+                } else {
+                    // If the question was not answered, mark as not attempted
+                    const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                    if (questionMapLink) {
+                        // Remove both classes if the question was not answered
+                        questionMapLink.classList.remove('correct', 'incorrect', 'attempted');
+                    }
+
+                    // Update Feedback Below the Question
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Not Attempted';
+                        feedbackDiv.classList.add('not-attempted');
+                        feedbackDiv.classList.remove('right', 'wrong');
+                    }
+                }
+            });
+
+            // Round the score to one decimal place
+            score = Math.round(score * 10) / 10;
+
+            // Update the result in the Question Map Sidebar
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Update the result below the questions list
+            const resultDivBelow = document.getElementById('resultBelow');
+            resultDivBelow.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Disable all inputs to prevent changes after submission
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            // Disable the submit buttons to prevent multiple submissions
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+
+            const submitButtonBelow = document.getElementById('submitBtnBelow');
+            if (submitButtonBelow) {
+                submitButtonBelow.disabled = true;
+            }
+        }
+
+        // Toggle Question Map on small screens
+        const toggleBtn = document.getElementById('toggleQuestionMap');
+        const questionMap = document.getElementById('questionMap');
+
+        toggleBtn.addEventListener('click', () => {
+            questionMap.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
